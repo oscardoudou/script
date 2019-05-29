@@ -5,6 +5,7 @@
 // @description  after having your github logged in, you probably just want to see public repos count instead of total amount including too many trivial private repos. If u have obsession, this is the script.
 // @author       oscardoudou
 // @match        *://github.com/*
+// @exclude      *://github.com/*/*
 // @require      https://code.jquery.com/jquery-3.4.1.min.js
 // @grant        none
 // credit        https://stackoverflow.com/questions/10341135/example-of-using-github-api-from-javascript
