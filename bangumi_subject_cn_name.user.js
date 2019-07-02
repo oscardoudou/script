@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         番组计划主页中文标题
 // @namespace    https://github.com/oscardoudou/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Bangumi番组计划中文标题
 // @author       oscardoudou
 // @include      *://bgm.tv/
 // @include      *://bangumi.tv/
-// @require      https://code.jquery.com/jquery-3.4.1.min.js
 // @grant        none
 // credit        ipcjs
 // ==/UserScript==
