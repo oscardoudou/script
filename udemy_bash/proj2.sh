@@ -11,13 +11,7 @@ search(){
     local curdir=$1
     echo $curdir
     local keyword=$2
-    if [ $curdir == "." ]; then
-        # curdir="." 
-        allincur="*" 
-    else
-        allincur="$curdir/*"  
-    fi
-    for file in $allincur
+    for file in $curdir/*
     do
         # echo $file
         if [ -f "$file" ]; then
@@ -31,7 +25,7 @@ search(){
             fi
         else
             # ignore report/ folder itself
-            if [ "$file" != "report" ]; then
+            if [ "$file" != "./report" ]; then
                 echo "$file is a directory, entering $file..."
                 #update the curdir with the directory name iterating now
                 curdir=$file
@@ -41,7 +35,7 @@ search(){
     done
     
 }
-
+rm -r report
 read -p "number of keywords: " num
 mkdir -p report
 word=()
