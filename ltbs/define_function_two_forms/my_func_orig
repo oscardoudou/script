@@ -1,0 +1,6 @@
+#/bin/bash
+dodo1 ()
+{
+    echo $1 dodo1
+}
+
