@@ -1,0 +1,16 @@
+#!/bin/bash
+#   
+#   takes the field name as argument and writes the corresponding field (or column) number on the standard output
+#   this is a dumb function just to explain how command substitution work
+#   cut -f$(getfield year) -d\| albums.txt 
+
+function getfield {
+    field=$1
+    field=${field:?"missing."}
+    case $field in
+    #   shouldn't use return here, the result has to go standard outpu
+        artist) echo 1;;
+        album) echo 2;;
+        year) echo 4;;
+    esac
+}
