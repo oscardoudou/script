@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+#
+
+function cd {
+    #   double quote make shell think the whole quoted string as single string. eg directory with space wont end up not such file or direcotry error
+    #   builtin ignore any function with same name
+    builtin cd "$@"
+    exit_status=$?
+    echo "$OLDPWD -> $PWD"
+    return $exit_status
+}

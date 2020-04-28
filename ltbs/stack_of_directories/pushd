@@ -1,13 +1,23 @@
 #!/bin/bash
 #   mimic pushd basic functionality
 #   make sure you export DIR_STACK in ~/.bash_profile
-#
+#   deficiency:
+#   1.invalid directory(empty directory)
+#   2.use pushd pop in script, once error would exit non-interactive shell, while use push pop in other function wont have this issue
+#   3.limit function of actual pushd popd
+#   4.lack hanlde of directory with space
+#   5.relative path is not supported
+#   tackle invalid directory, but end up duplicate starting directory when first pushd 
 
 function pushd
 { 
-    echo "push $dirname to DIR_STACK"
     dirname=$1
-    DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
-    cd ${dirname:?"required"}
-    echo $DIR_STACK
+    echo "push $dirname to DIR_STACK"
+    if cd ${dirname:?"required"}
+    then
+        DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
+        echo $DIR_STACK
+    else
+        echo "still in "$PWD
+    fi
 }
