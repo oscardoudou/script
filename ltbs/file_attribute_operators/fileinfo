@@ -1,0 +1,40 @@
+#!/bin/bash
+# essentially the same as ls -l, give readable but lame info
+# file type(if dir show searchable)
+# ownership
+# read
+# write
+# execute(only for file)
+
+filename="$1"
+if ! [ -e "$filename" ]; then 
+    echo "$filename doesn't exist"
+fi
+
+if [ -f "$filename" ]; then 
+    echo "$filename is a regular file"
+elif [ -d "$filename" ]; then
+    echo -n "$filename is a directory could "
+    if ! [ -x "$filename" ]; then 
+        echo -n "not "
+    fi
+    echo "be searched"
+else 
+    echo "$filename is not a regular file nor a directory"
+fi
+
+if [ -O "$filename" ]; then 
+    echo "$filename is owned by you"
+fi 
+
+if [ -r "$filename" ]; then 
+    echo "$filename is readable"
+fi
+
+if [ -w "$filename" ]; then
+    echo "$filename is writable"
+fi 
+
+if [ -x "$filename" -a ! -d "$filename" ]; then
+    echo "$filename is executable"
+fi
