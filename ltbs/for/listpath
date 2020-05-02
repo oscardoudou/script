@@ -1,0 +1,21 @@
+#!/bin/bash
+# old version bash don't have pattern operator ${VAR:-//pattern/pattenn/} is not available
+# print each directory in PATH, in addition, have it print out detail info
+
+function listpath ()
+{
+    IFS=:
+        for dir in "$@":
+        do 
+            echo "$dir"
+            if [ -z "$dir" ]; then
+                echo "there is a value of :: in PATH"
+            elif ! [ -e "$dir" ]; then 
+                echo "$dir doesn't exist"
+            elif ! [ -d "$dir" ]; then
+                echo "$dir isn't a directory"
+            else 
+                ls -ld "$dir"
+            fi
+        done
+}
