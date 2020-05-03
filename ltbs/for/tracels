@@ -1,0 +1,10 @@
+#!/bin/bash
+# wrapper for tracedir in order to accept multiple arguments
+# compare the result by executing `colordiff -by <(tracedir ~/script) <(tracels *)` from script directoy
+# accept multiple argument isn't complicate, simlpy add this to the same file of tracedir should be fine
+function tracels () {
+    for i in "$@"
+    do
+        tracedir $i
+    done 
+}
