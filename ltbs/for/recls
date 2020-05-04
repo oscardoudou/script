@@ -1,0 +1,35 @@
+#!/bin/bash
+# use time recls * compare with time tracels *, this one is one magnitude faster
+# real	0m0.075s
+# user	0m0.027s
+# sys	0m0.041s
+function recls () {
+    singletab="\t"
+    for tryfile in "$@"
+    do 
+        echo $tryfile
+        if [ -d "$tryfile" ]; then
+            thisfile=$tryfile
+            recdir $(command ls $tryfile)
+        fi
+    done
+}
+
+function recdir () {
+    tab=$tab$singletab
+    for file in "$@"
+    do 
+        echo -e $tab$file
+        thisfile=$thisfile/$file
+        # echo "thisfile now is $thisfile"
+        if [ -d "$thisfile" ]; then
+            # echo "thisfile $thisfile is directory"
+            # recdir thisfile will endup only one level from main script argument
+            # either for file in $(ls $1), recdir thisfile,
+            # or for file in $@, recdir $(ls thisfile) 
+            recdir $(ls "$thisfile")
+        fi
+        thisfile=${thisfile%/*}
+    done
+    tab=${tab%"$singletab"}
+}
