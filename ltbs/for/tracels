@@ -8,9 +8,14 @@
 # 
 # tracedir:
 # print all directories below a give one with structure
-# my solution took more cycle on setting up tab spaing, will become more expensive when have deeper file structure
+# my solution took more cycle on setting up tab spacing, will become more expensive when have deeper file structure
 # it only takes one argument
 # tracdeir ltbs under script directory 
+# 
+# performance is on same magnitude as long as get rid of all the cd, setting up tab spacing use loop may slow down, but most expensive step is cd
+# real	0m0.100s
+# user	0m0.032s
+# sys	0m0.045s
 function tracels () {
     for i in "$@"
     do
@@ -29,20 +34,20 @@ function tracedir () {
     do  
         echo -en "\t"
     done    
-    echo -e "$file"
+    echo -e "${file##*/}"
     if [ -d "$file" ]; then 
         # echo "$file is directory, cd to $file"
-        cd $file
+        # cd $file
         tabcount=$((tabcount+1))
         # echo $PWD
-        for f in $(ls .)
+        for f in $(ls $file)
         do
-            tracedir "$f"
+            tracedir "$file/$f"
         done
         tabcount=$((tabcount-1))
         # this line has a problem if var file is global, it doesn't print directory it cd back to
         # rather last non-dir file in recent tracedir
         # echo "cd back to $file"
-        cd ..
+        # cd ..
     fi
 }
