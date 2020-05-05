@@ -4,13 +4,19 @@
 # user	0m0.027s
 # sys	0m0.041s
 function recls () {
-    singletab="\t"
+    singletab="|\t"
+    pipedash="|-------"
+    tab=$singletab
+    echo "."
+    echo -e $singletab
     for tryfile in "$@"
     do 
         if [ -d $tryfile ]; then
-            echo $tryfile/
+            echo -e $pipedash$tryfile/
+            echo -e $tab"|"
         else 
-            echo $tryfile
+            echo -e $pipedash$tryfile
+            echo -e $tab"|"
         fi
         if [ -d "$tryfile" ]; then
             thisfile=$tryfile
@@ -20,14 +26,17 @@ function recls () {
 }
 
 function recdir () {
+    #this is local, it could get correct value based on tab's value
+    local tabwithdash=$tab$pipedash
     tab=$tab$singletab
     for file in "$@"
     do 
         thisfile=$thisfile/$file
         if [ -d $thisfile ]; then
-            echo -e $tab$file/
+            echo -e $tabwithdash$file/
+            echo -e $tab"|"
         else 
-            echo -e $tab$file
+            echo -e $tabwithdash$file
         fi
         # echo "thisfile now is $thisfile"
         if [ -d "$thisfile" ]; then
@@ -40,4 +49,6 @@ function recdir () {
         thisfile=${thisfile%/*}
     done
     tab=${tab%"$singletab"}
+    #order of print and shrink is important, just litke order  of tabwithdash and tab
+    echo -e $tab
 }
