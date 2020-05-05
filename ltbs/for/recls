@@ -7,7 +7,11 @@ function recls () {
     singletab="\t"
     for tryfile in "$@"
     do 
-        echo $tryfile
+        if [ -d $tryfile ]; then
+            echo $tryfile/
+        else 
+            echo $tryfile
+        fi
         if [ -d "$tryfile" ]; then
             thisfile=$tryfile
             recdir $(command ls $tryfile)
@@ -19,8 +23,12 @@ function recdir () {
     tab=$tab$singletab
     for file in "$@"
     do 
-        echo -e $tab$file
         thisfile=$thisfile/$file
+        if [ -d $thisfile ]; then
+            echo -e $tab$file/
+        else 
+            echo -e $tab$file
+        fi
         # echo "thisfile now is $thisfile"
         if [ -d "$thisfile" ]; then
             # echo "thisfile $thisfile is directory"
