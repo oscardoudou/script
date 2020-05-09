@@ -9,13 +9,20 @@
 #   5.relative path is not supported
 #   tackle invalid directory, but end up duplicate starting directory when first pushd 
 
+#   v2 fix the non-exist directory, but bc of we cd to the first pushed directory before we expand $PWD
+#   so this would always give us two copy of first directory pushed into
+
+
+#   v3 use file operators, string operatro instead of using cd's exit statu to determine whether is non exist directory
 function pushd
 { 
     dirname=$1
     echo "push $dirname to DIR_STACK"
-    if cd ${dirname:?"required"}
-    then
+    # put in single test, this doesn't handle the case the argument is missing. ($dirname is null)
+    # if [ \( -n "$dirname" \) -a \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
+    if [ -n "$dirname" ] && [ \(-d "$dirname" \) -a \(-x "$dirname" \) ] ; then
         DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
+        cd "$dirname"
         echo $DIR_STACK
     else
         echo "still in "$PWD
