@@ -1,0 +1,29 @@
+#!/bin/bash
+# cd old new
+# take pathname of current directory and tries to find the string old. 
+# If found, substitute with new and attempt to cd into that path 
+# nested case, remember inner case's ending keyword esac also need a ;;
+# mutliple statement in case ;; on last statement 
+# 1>&2 is same as >&2, & means it is a file descriptor
+function cd () {
+    case "$#" in 
+        0|1) 
+            builtin cd $1;;
+        2)
+            old=$1
+            new=$2
+            currdir=$PWD
+            newdir=${currdir//$old/$new}
+            case $newdir in
+                $currdir)
+                    echo "unable to find $new in $currdir">&2
+                    # redirect to stderr, doesn't mean exit status will anything other than 0, you have to manually return non zero code
+                    return 1;;
+                *)  
+                    builtin cd "$newdir";;
+            esac;;
+        *)
+            echo "more than 2 arguments" 1>&2
+            return 1;;
+    esac
+}

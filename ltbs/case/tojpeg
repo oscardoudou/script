@@ -1,0 +1,42 @@
+#! /bin/bash 
+# task 4-2
+# use different utitility convert to pnm first, then convert pnm ot jpeg
+# the usage of case is to select the correct conversion utility based on file extension
+# ltbs on page 358 parenthesis is separated from pattern in a new line, is not acceptable.
+# case expression in 
+#   pattern1)
+#   statements ;;
+#   *)
+#   statements ;;
+# esac
+# https://filesamples.com/categories/image
+function tojpeg () {
+    filename=$1
+    filename=${filename:?" required"}
+    extension=${filename##*.}
+    # .pnm is not acceptable on mac, will prompt rror reading first byte of what is expected to be a Netpbm magic number.
+    # ltbs has inconsistent code on page 332 page 359
+    pnmfile=${filename%.*}.ppm
+    jpegfile=${filename%.*}.jpeg
+    # select correct conversion utility based on file extension, use miscellaneous utility convert graphic file to common ppm file
+    case $extension in 
+        jpeg|jpg)
+        echo "$filename already jpeg file, no need to convert" 
+        return 0;;
+        tga)
+        tgatoppm  $filename > $pnmfile;;
+        xpm)
+        xpmtoppm $filename > $pnmfile;;
+        pcx)
+        pcxtoppm $filename > $pnmfile;;
+        tiff|tif)
+        tifftopnm $filename > $pnmfile;;
+        gif)
+        giftopnm $filename > $pnmfile;;
+        *)
+        echo "$filename has unknown graphic file extension $extension"
+        return 1;;
+    esac
+    pnmtojpeg $pnmfile > $jpegfile
+    rm $pnmfile
+}
