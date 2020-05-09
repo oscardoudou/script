@@ -20,7 +20,7 @@ function pushd
     echo "push $dirname to DIR_STACK"
     # put in single test, this doesn't handle the case the argument is missing. ($dirname is null)
     # if [ \( -n "$dirname" \) -a \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
-    if [ -n "$dirname" ] && [ \(-d "$dirname" \) -a \(-x "$dirname" \) ] ; then
+    if [ -n "$dirname" ] && [ \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
         DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
         cd "$dirname"
         echo $DIR_STACK
