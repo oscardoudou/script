@@ -1,0 +1,25 @@
+#!/bin/bash
+# provide list of directories from pushd directory stack,
+# the selected directory is moved to the front of the stack and become working directory 
+function selectd () {
+    # set select prompt
+    PS3="directory? "
+    select selection in $DIR_STACK
+    do
+        if [ $selection ]; then   
+            echo you select $selection
+            dir_stack="$DIR_STACK"
+            # strip of dir to the right of $selection
+            # i dont see the necessarity of using leading space and append space to the left of $selectio, since push always have a space in the endn
+            DIR_STACK="$selection ${dir_stack%%$selection *}"
+            echo $DIR_STACK
+            DIR_STACK="$DIR_STACK${dir_stack##*$selection }"
+            echo $DIR_STACK
+            cd "$selection"
+            break
+        else
+            echo invalid selection "$selection"
+            break
+        fi
+    done
+}
