@@ -1,0 +1,11 @@
+#!/bin/bash
+function listpath () {
+    path=$PATH:
+    # i have to use 
+    # while [ -n "$PATH" ]; do
+    while [ $path ]; do 
+        echo ${path%%:*}
+        # if you dont preprocess path with trailing :, no way to get a empty path
+        path=${path#*:}
+    done
+}
