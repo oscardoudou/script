@@ -10,8 +10,14 @@
 #   statements ;;
 # esac
 # https://filesamples.com/categories/image
-function tojpeg () {
+
+usage="Usage: $0 [-s size] [-w width] [-c \"color\"] imagefile ..."
+
+function procimage () {
     filename=$1
+    size=${2:-480}
+    width=${3:-2}
+    color=${4:-"-color red"}
     filename=${filename:?" required"}
     extension=${filename##*.}
     # .pnm is not acceptable on mac, will prompt rror reading first byte of what is expected to be a Netpbm magic number.
@@ -37,6 +43,34 @@ function tojpeg () {
         echo "$filename has unknown graphic file extension $extension"
         return 1;;
     esac
-    pnmtojpeg $pnmfile > $jpegfile
+
+    pnmscale -quiet -xysize $size $size $pnmfile |
+    pnmmargin $color $width |
+    pnmtojpeg > $jpegfile
+
     rm $pnmfile
 }
+
+while getopts ":s:w:c:" opt; do 
+    case $opt in 
+        s) 
+            size=$OPTARG ;;
+        w)
+            width=$OPTARG ;;
+        c)  
+            color="-color $OPTARG" ;;
+        \?) 
+            echo $usage
+            exit 1;;
+    esac
+done
+
+shift $((OPTIND-1))
+
+if [ -z "$@"]; then 
+    echo $usage
+fi
+
+for imagefile in "$@"; do
+    procimage $imagefile $size $width "$color"
+done
