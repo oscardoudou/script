@@ -1,10 +1,16 @@
 #!/bin/bash
 #
-#
-
+# update with pushd v4, implement  popd +N delete Nth(starting 0) directories
+# usage pop +N
 function popd
 {
-    if [ -n "$DIR_STACK" ]; then
+    if [ $(echo $1 | grep '^+[0-9][0-9]*$') ]; then 
+        let num=${1#+}
+        getNdir $num
+        echo "delete $target from DIR_STACK"
+        DIR_STACK=$stackfront$DIR_STACK
+        echo "DIR_STACK: $DIR_STACK"
+    elif [ -n "$DIR_STACK" ]; then
         DIR_STACK=${DIR_STACK#* }
         cd ${DIR_STACK%% *}
         echo "$PWD" 

@@ -72,5 +72,6 @@ if [ -z "$@"]; then
 fi
 
 for imagefile in "$@"; do
+    # double quote around color is necessary, otherwise it would complain on step pnmmargin
     procimage $imagefile $size $width "$color"
 done

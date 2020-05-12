@@ -14,17 +14,36 @@
 
 
 #   v3 use file operators, string operatro instead of using cd's exit statu to determine whether is non exist directory
+
+#   v4 introduce getNdir to implement pushd +N and swap top 2 directories if no argument provided
 function pushd
 { 
-    dirname=$1
-    echo "push $dirname to DIR_STACK"
-    # put in single test, this doesn't handle the case the argument is missing. ($dirname is null)
-    # if [ \( -n "$dirname" \) -a \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
-    if [ -n "$dirname" ] && [ \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
-        DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
-        cd "$dirname"
-        echo $DIR_STACK
+    if [ -n "$(echo $1| grep '^+[0-9][0-9]*$')" ]; then
+        let num=${1#+}
+        getNdir $num
+        cd $target
+        echo "stackfront: $stackfront"
+        DIR_STACK=$target$stackfront$DIR_STACK
+        echo "DIR_STACK: $DIR_STACK"
+    elif [ -z "$1" ]; then
+        firstdir=${DIR_STACK%% *}
+        DIR_STACK=${DIR_STACK#* }
+        seconddir=${DIR_STACK%% *}
+        DIR_STACK=${DIR_STACK#* }
+        #both firstdir seconddir are without trailing space
+        DIR_STACK="$seconddir $firstdir $DIR_STACK"
+        cd $seconddir
     else
-        echo "still in "$PWD
+        dirname=$1
+        echo "push $dirname to DIR_STACK"
+        # put in single test, this doesn't handle the case the argument is missing. ($dirname is null)
+        # if [ \( -n "$dirname" \) -a \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
+        if [ -n "$dirname" ] && [ \( -d "$dirname" \) -a \( -x "$dirname" \) ] ; then
+            DIR_STACK="$dirname ${DIR_STACK:-$PWD" "}"
+            cd "$dirname"
+            echo $DIR_STACK
+        else
+            echo "still in "$PWD
+        fi
     fi
 }
