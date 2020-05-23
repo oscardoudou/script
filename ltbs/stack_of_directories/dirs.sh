@@ -15,6 +15,7 @@ function dirs () {
             let count=count+1
         done
         # add check for N exceeding number of directories in DIR_STACK, 
+        # check stack empty as well as whether above loop iteration times - 1 equals param, if equals then it happen to get last dir in stack, otherwise param exceeding stack depth 
         if [ -z "$dirstack" -a $((count-1)) -ne "$1" ]; then
             echo "DIR_STACK has no ${num}th directory"
             # for function would directly called from shell, be careful on exit
