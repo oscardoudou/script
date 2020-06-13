@@ -1,6 +1,6 @@
 #! /bin/bash 
 # task 4-2
-# use different utitility convert to pnm first, then convert pnm ot jpeg
+# use different utility convert to pnm first, then convert pnm ot jpeg
 # the usage of case is to select the correct conversion utility based on file extension
 # ltbs on page 358 parenthesis is separated from pattern in a new line, is not acceptable.
 # case expression in 
@@ -20,7 +20,7 @@ function procimage () {
     color=${4:-"-color red"}
     filename=${filename:?" required"}
     extension=${filename##*.}
-    # .pnm is not acceptable on mac, will prompt rror reading first byte of what is expected to be a Netpbm magic number.
+    # .pnm is not acceptable on mac, will prompt error reading first byte of what is expected to be a Netpbm magic number.
     # ltbs has inconsistent code on page 332 page 359
     pnmfile=${filename%.*}.ppm
     jpegfile=${filename%.*}.jpeg
@@ -66,8 +66,12 @@ while getopts ":s:w:c:" opt; do
 done
 
 shift $((OPTIND-1))
-
-if [ -z "$@"]; then 
+# $* is single string while $@ is "$1" "$2" ... "$N", 
+# -z "$@" would complain too many arguments if you pass multiple file, 
+# even if you pass only * or *.*, when command ./tojpeg -s 360 -w 10 -c purple *.* doing path expansion,
+# they usualy expands to multiple arguemnt, in *.* case, it expands to all files with extension
+# after path expansino, it search for command in this case, tojpeg is neither function builtin nor command in path
+if [ -z "$*" ]; then 
     echo $usage
 fi
 
