@@ -24,14 +24,16 @@
 #    there isn't any more reason to still having function, as it can't benifit us by easy debugging
 # why we dont remove temp file in prev version
 # that would be really long pipeline inside switch, now with help of eval, we dont have to pipe directly inside switch, we can just wait every piece contruction done and do it in one go
-usage="Usage: $0 [-s size] [-w width] [-c \"color\"] imagefile ..."
+usage="Usage: $0 [-S] [-s size] [-w width] [-c \"color\"] imagefile ..."
 
 # no default size to stop address scale regardless in prev version
 width=5
 color="-color red"
 standarise="| pnmtojpeg -quiet"
-while getopts ":s:w:c:" opt; do 
+while getopts ":Ss:w:c:" opt; do 
     case $opt in 
+        S) 
+            sharpness='| pnmnlfilt -0.7 0.45' ;;
         s) 
             size=$OPTARG 
             scale="| pnmscale -xysize $size $size";;
@@ -77,5 +79,5 @@ for imagefile in "$@"; do
             echo "$filename has unknown graphic file extension $extension";;
     esac
     outfile=${imagefile%.*}.new.jpeg
-    eval $convert $imagefile $scale $border $standarise > $outfile
+    eval $convert $imagefile $scale $border $sharpness $standarise > $outfile
 done
