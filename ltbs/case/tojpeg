@@ -10,55 +10,37 @@
 #   statements ;;
 # esac
 # https://filesamples.com/categories/image
-
+# the reason we use function in prev version is 
+# 1. we want to encapsulate the detail logic, so that script is more readable,
+# 2. use function which accept argument help debug
+# why we are not using function when adopt eval
+# 0. although function accept argument makes it easier to debug, but that is actually sacrificing
+#    convention, which should place the default value upfront at the starat of script not hide deep in the function
+# 1. if you are doing eval procimage and inside function procimage{} have all pipe in variable, this wont work,
+#    except you have eval in function as well, but that wont let peoople know why you could have pipe in var, better explicity use it in main for loop
+# 2. previously we are executing same pipeline, only argument of each command in pipeline differs, 
+#    now entire step would differ because the way we use it, and what each step should be has to be decided when doing getopt, as we are use default value in each step
+#    so default value should to declared before getopts, since default value declaration has to be upfront, 
+#    there isn't any more reason to still having function, as it can't benifit us by easy debugging
+# why we dont remove temp file in prev version
+# that would be really long pipeline inside switch, now with help of eval, we dont have to pipe directly inside switch, we can just wait every piece contruction done and do it in one go
 usage="Usage: $0 [-s size] [-w width] [-c \"color\"] imagefile ..."
 
-function procimage () {
-    filename=$1
-    size=${2:-480}
-    width=${3:-2}
-    color=${4:-"-color red"}
-    filename=${filename:?" required"}
-    extension=${filename##*.}
-    # .pnm is not acceptable on mac, will prompt error reading first byte of what is expected to be a Netpbm magic number.
-    # ltbs has inconsistent code on page 332 page 359
-    pnmfile=${filename%.*}.ppm
-    jpegfile=${filename%.*}.jpeg
-    # select correct conversion utility based on file extension, use miscellaneous utility convert graphic file to common ppm file
-    case $extension in 
-        jpeg|jpg)
-        echo "$filename already jpeg file, no need to convert" 
-        return 0;;
-        tga)
-        tgatoppm  $filename > $pnmfile;;
-        xpm)
-        xpmtoppm $filename > $pnmfile;;
-        pcx)
-        pcxtoppm $filename > $pnmfile;;
-        tiff|tif)
-        tifftopnm $filename > $pnmfile;;
-        gif)
-        giftopnm $filename > $pnmfile;;
-        *)
-        echo "$filename has unknown graphic file extension $extension"
-        return 1;;
-    esac
-
-    pnmscale -quiet -xysize $size $size $pnmfile |
-    pnmmargin $color $width |
-    pnmtojpeg > $jpegfile
-
-    rm $pnmfile
-}
-
+# no default size to stop address scale regardless in prev version
+width=5
+color="-color red"
+standarise="| pnmtojpeg -quiet"
 while getopts ":s:w:c:" opt; do 
     case $opt in 
         s) 
-            size=$OPTARG ;;
+            size=$OPTARG 
+            scale="| pnmscale -xysize $size $size";;
         w)
-            width=$OPTARG ;;
+            width=$OPTARG
+            border="| pnmmargin $color $width" ;;
         c)  
-            color="-color $OPTARG" ;;
+            color="-color $OPTARG"
+            border="| pnmmargin $color $width" ;;
         \?) 
             echo $usage
             exit 1;;
@@ -66,6 +48,7 @@ while getopts ":s:w:c:" opt; do
 done
 
 shift $((OPTIND-1))
+
 # $* is single string while $@ is "$1" "$2" ... "$N", 
 # -z "$@" would complain too many arguments if you pass multiple file, 
 # even if you pass only * or *.*, when command ./tojpeg -s 360 -w 10 -c purple *.* doing path expansion,
@@ -76,6 +59,23 @@ if [ -z "$*" ]; then
 fi
 
 for imagefile in "$@"; do
-    # double quote around color is necessary, otherwise it would complain on step pnmmargin
-    procimage $imagefile $size $width "$color"
+    # select correct conversion utility based on file extension, use miscellaneous utility convert graphic file to common ppm file
+    case $imagefile in 
+        *.jpeg|*.jpg)
+            convert="jpegtopnm -quiet" ;;
+        *.tga)
+            convert="tgatoppm" ;;
+        *.xpm)
+            convert="xpmtoppm" ;;
+        *.pcx)
+            convert="pcxtoppm" ;;
+        *.tiff|*.tif)
+            convert="tifftopnm" ;;
+        *.gif)
+            convert="giftopnm" ;;
+        *)
+            echo "$filename has unknown graphic file extension $extension";;
+    esac
+    outfile=${imagefile%.*}.new.jpeg
+    eval $convert $imagefile $scale $border $standarise > $outfile
 done
