@@ -76,7 +76,8 @@ for imagefile in "$@"; do
         *.gif)
             convert="giftopnm" ;;
         *)
-            echo "$filename has unknown graphic file extension $extension";;
+            echo "$imagefile has unknown graphic file extension ${imagefile##*.}"
+            continue;;
     esac
     outfile=${imagefile%.*}.new.jpeg
     eval $convert $imagefile $scale $border $sharpness $standarise > $outfile
