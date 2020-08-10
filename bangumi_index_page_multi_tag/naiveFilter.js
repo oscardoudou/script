@@ -6,34 +6,20 @@
 // @author       You
 // @match        http://bangumi.tv/index/*
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.js
-// @resource     customcss https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
+// @resource     jqueryuicss https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
 // @grant       unsafeWindow
 // @grant       GM_addStyle
 // @grant       GM_getResourceText
 
 // ==/UserScript==
-// as long as you add/grant GM_addStyle, you shouldn't need self defined one below
-// function GM_addStyle(css) {
-//   const style = document.getElementById("GM_addStyleBy8626") || (function() {
-//     const style = document.createElement('style');
-//     style.type = 'text/css';
-//     style.id = "GM_addStyleBy8626";
-//     document.head.appendChild(style);
-//     return style;
-//   })();
-//   const sheet = style.sheet;
-//   sheet.insertRule(css, (sheet.rules || sheet.cssRules || []).length);
-// }
-
-
 GM_addStyle(".tag_filter { border: 1px solid #77bc1f;}");
 GM_addStyle(".tag_filter { display: inline-block;}");
 GM_addStyle(".tag_filter { margin: 3px;}");
 GM_addStyle(".tag_filter { padding: 6px;}");
 GM_addStyle(".tag_filter { font-size: 16px;}");
 GM_addStyle(".tag_filter { color: black;}");
-GM_addStyle(".tag { margin: 2px;}");
-var newCSS = GM_getResourceText ("customCSS");
+GM_addStyle(".tag { margin: 1px;}");
+var newCSS = GM_getResourceText("jqueryuicss");
 GM_addStyle (newCSS);
 
 //global var
@@ -72,10 +58,10 @@ Object.defineProperty(String.prototype, 'hashCode', {
          comment.innerHTML=''
          tags.forEach((tag) => {
             let anchor = document.createElement('a');
-            anchor.innerHTML = `${tag}`
+             //keep one trailing space, so when edit again in comment box, it will still be space separated
+            anchor.innerHTML = `${tag} `
             anchor.className = 'tag'
             let tagId = tag.hashCode()
-//             $(anchor).data('tagId', tagId)
             anchor.setAttribute('tagId', tagId)
             //set onClick function of anchor is not viable, due to function is defined in userscript scope, wihich is outside target page scope. That's why when it evaluate the value of onClick attribute, it yells func not defined
             anchor.addEventListener('click',function(){ filterTag(this, tagId)}, false)
@@ -91,26 +77,18 @@ Object.defineProperty(String.prototype, 'hashCode', {
     //crate and add search bar
     let searchbar = document.createElement('div')
     searchbar.className = 'ui-widget'
-    searchbar.id = 'tags'
     let label = document.createElement('label')
-    label.for = 'tags'
+    label.setAttribute('for','tags')
     label.innerHTML = 'Tags: '
     let input = document.createElement('input')
     input.id = 'tags'
     searchbar.appendChild(label)
     searchbar.appendChild(input)
     filterBar.insertBefore(searchbar, browserTypeSelector)
-//     $(searchbar).autocomplete({
-//       source: map.values()
-//     });
-    console.log(Array.from(map.values()))
     //auto complete is a funciton in jquery-ui, need @require
-    $("#tags").autocomplete ( {source: ["hey","hi"] });
-//     searchbar.addEventListener('focus', function(){
-//         this.autocomplete = "on";
-//     });
-    //     $("#tags").removeAttribute("autocomplete");
-
+    $('#tags').autocomplete ( {source: Array.from(map.values()) ,
+        minLength: 1});
+//     $('#tags').attr('autocomplete','on');
 })();
 
 function filterTag(tag, tagId){
@@ -127,9 +105,6 @@ function filterTag(tag, tagId){
         let tagAnchorList = $('#browserItemList #comment_box .text')[i].children
         let hide = true;
         for( let j = 0 ; j < tagAnchorList.length; j++){
-//             if(tagAnchorList[j].innerHTML.indexOf(`${tag.innerHTML}`) !== -1){
-//             console.log($(tagAnchorList[j]).data('tagId'))
-//             if($(tagAnchorList[j]).data('tagId') == tagId){
             if(tagAnchorList[j].getAttribute('tagId') == tagId){
                 hide = false
             }
