@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         bangumi index page tag filter
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1.1
 // @description  filter space separated tags in comment box on bangumi index page
 // @author       You
 // @match        http://bangumi.tv/index/*
@@ -12,7 +12,7 @@
 // @grant       GM_getResourceText
 
 // ==/UserScript==
-GM_addStyle(".tag_filter { display: inline-block; margin: 2px 0; padding: 2px 25; font-size: 14px; color: #fdfdfd; border-radius: 5px; line-height: 150%;}");
+GM_addStyle(".tag_filter { display: inline-block; margin: 0 5px 5px 0; padding: 2px 5px; font-size: 12px; color: #dcdcdc; border-radius: 5px; line-height: 150%; background: #6e6e6e; cursor: pointer;}");
 GM_addStyle(".tag_filter { font-family: 'SF Pro SC','SF Pro Display','PingFang SC','Lucida Grande','Helvetica Neue',Helvetica,Arial,Verdana,sans-serif,Hiragino Sans GB;}");
 GM_addStyle(".tag { margin: 1px;}");
 GM_addStyle(".searchContainer { height: 25px; min-width: 100%}")
@@ -108,7 +108,7 @@ function filterTag(tag, tagId){
     if(getActiveFilterIds().indexOf(tagId) != -1){
         return;
     }
-    let filterButton = document.createElement('button')
+    let filterButton = document.createElement('a')
     filterButton.innerHTML = tag
     filterButton.className = 'tag_filter'
     filterButton.id = tagId
