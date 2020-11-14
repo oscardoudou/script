@@ -22,11 +22,17 @@ This give you access to write to system level directories including /system, whi
 #### 4.2 Hold COMMAND+R when you restart to enter recovery mode
 #### 4.3 `csrutil disable; reboot` to disable the protection and reboot
 If you feel disable the protection too risky, revert it back by enter recovery mode and `csrutil enable; reboot`
-update for Catalina, you may encounter "read only file system" with your SIP disabled. `sudo mount -uw /; killall Finder `
 
+update for Catalina, you may encounter "read only file system" with your SIP disabled. `sudo mount -uw /; killall Finder ` [reddit post](https://www.reddit.com/r/MacOS/comments/caiue5/macos_catalina_readonly_file_system_with_sip/)
+
+update for Big Sur, resolution for Read Only System [won't work](https://developer.apple.com/forums/thread/649832) as it returns error "/ failed with 66". In the same thread, people suggested using  /Library instead of /System/Library 
+`sudo cp -R /System/Library/Displays /Library/`
 ## 5. Copy the file to System folder to config your resolution
-
+Catalina:
 `sudo cp ~/Downloads/DisplayProductID-d070.plist /System/Library/Displays/Contents/Resources/Overrides/DisplayVendorID-10ac/DisplayProductID-d070`
+
+Big Sur:
+`sudo cp ~/Downlaods/DisplayProductID-d070.plist /Library/Displays/Contents/Resources/Overrides/DisplayVendorID-10ac/DisplayProductID-d070`
 
 You may want to remove the extension as above while you copy. That works for me.
 
