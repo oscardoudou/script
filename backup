@@ -1,6 +1,7 @@
 #!/bin/bash
 currRepo=${PWD##*/}
 echo "current repo: $currRepo" 
+# safe to check if it is directory, as PWD wont store a path to a regular file
 if [ -d $1/$currRepo ]; then
   echo "backup destination $1/$currRepo already exists"
   cmd="rm -rf $1/$currRepo"
