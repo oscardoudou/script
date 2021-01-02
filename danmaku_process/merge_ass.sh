@@ -3,7 +3,7 @@
 danmaku=$1
 subtitle=$2
 #make sure both are utf-8 encoded, most likely ass would violate this rule
-merged=${subtitle%%.*}_danmaku_subtitle.ass
+merged=${subtitle%%.*}_danmaku.ass
 #currently primarily use danmaku's script info
 cat $danmaku | sed -n '/\Script/,/^[[:space:]]$/p' > $merged
 #extract style section from danmaku, but exclude the empty line after 
