@@ -8,8 +8,8 @@ merged=${subtitle%%.*}_danmaku.ass
 cat $danmaku | sed -n '/\[Script/,/^[[:space:]]$/p' > $merged
 #extract style section from danmaku, but exclude the empty line after 
 cat $danmaku | sed -n '/\[V/,/^[[:space:]]$/{/^[[:space:]]$/!p;}' >> $merged
-#append sustitle file's style at the end of danmaku's style 
-cat $subtitle | sed -n '/\[Script/,/\[Events/p' | grep Style\: | awk 'BEGIN{FS=OFS=","}{$3=($3+4)*1.5; print $0}' >> $merged
+#append sustitle file's style at the end of danmaku's style (probably could just grep directly)
+cat $subtitle | sed -n '/\[Script/,/\[Events/p' | grep Style\: | awk 'BEGIN{FS=OFS=","}{$3=($3+4)*2; print $0}' >> $merged
 #append event section column header
 echo -en "\n" >> $merged
 cat $danmaku | sed -n '/\[Events/,/Format\:/p' >> $merged
