@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         bangumi index page tag filter
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1.1
+// @version      0.1.1.2
 // @description  filter space separated tags in comment box on bangumi index page
 // @author       You
 // @match        http://bangumi.tv/index/*
@@ -19,6 +19,7 @@ GM_addStyle(".searchContainer { height: 25px; min-width: 100%}")
 GM_addStyle(".searchLabel { height: 25px; min-width: 100%}")
 GM_addStyle(".searchInput { position: relative; width: 80%; top: 0; left: 0; margin: 0; height: 25px !important; border-radius: 4px; background-color: white !important; outline: 0px solid white !important; border: 0p}")
 GM_addStyle("#browserTools { height: 55px;}")
+GM_addStyle(".grey {font-size: 10px; color: #999;}")
 var newCSS = GM_getResourceText("jqueryuicss");
 GM_addStyle (newCSS);
 
@@ -30,6 +31,8 @@ if (window.itemList == undefined) {
    window.filterBar = $('#browserTools')[0]
    window.browserTypeSelector = $('#browserTools')[0].children[0]
    window.map = new Map()
+   window.dict0 = new Map()
+   window.dict
 }
 //get rid of eslint syntax complaint
 var itemList = window.itemList
@@ -37,6 +40,8 @@ var comments = window.comments
 var filterBar = window.filterBar
 var browserTypeSelector = window.browserTypeSelector
 var map = window.map
+var dict0 = window.dict0
+var dict = window.dict
 //create hash from string
 Object.defineProperty(String.prototype, 'hashCode', {
   value: function() {
@@ -65,11 +70,16 @@ Object.defineProperty(String.prototype, 'hashCode', {
             anchor.className = 'tag'
             let tagId = tag.hashCode()
             anchor.setAttribute('tagId', tagId)
-            //set onClick function of anchor is not viable, due to function is defined in userscript scope, wihich is outside target page scope. That's why when it evaluate the value of onClick attribute, it yells func not defined
+            //set onClick function of anchor is not viable, due to function is defined in userscript scope, which is outside target page scope. That's why when it evaluate the value of onClick attribute, it yells func not defined
             anchor.addEventListener('click',function(){ filterTag(this.innerHTML, tagId)}, false)
              //store map as string -> id
             if(!map.has(`${tag}`)){
                 map.set(`${tag}`, tagId)
+            }
+            if(!dict0.has(`${tag}`)){
+                dict0.set(`${tag}`,1)
+            }else{
+                dict0.set(`${tag}`, dict0.get(`${tag}`)+1)
             }
             comment.appendChild(anchor)
             tagIds.push(tagId)
@@ -77,7 +87,7 @@ Object.defineProperty(String.prototype, 'hashCode', {
          //use jquery function, convert var to jquery object by wrap with $. btw, this doesn't actually create a data-tags attribute
          $(comment).data('tagIds',tagIds)
      }
-    //crate and add search bar
+    //create and add search bar
     let searchbar = document.createElement('div')
     searchbar.className = 'ui-widget searchContainer'
     filterBar.insertBefore(searchbar, browserTypeSelector)
@@ -101,8 +111,28 @@ Object.defineProperty(String.prototype, 'hashCode', {
     $("#tags").autocomplete({
         select: function( event, ui ) { filterTag(ui.item.value, map.get(ui.item.value)); $(this).val(''); return false;}
     })
-    })();
+    console.log(dict0)
+    let toBeInserted = $('#columnSubjectBrowserB')[0]
+    dict = new Map([...dict0].filter(([k,v]) => v > 2 && k !== "" ).sort((a, b) => (a[1] < b[1] && 1) || (a[1] === b[1] ? 0 : -1)))
+    console.log(dict)
+    dict.forEach(function(value, key, map){
+     console.log(`${key}:${key.length}`)
+     let tag = document.createElement('a')
+     let count = document.createElement('small')
+     tag.innerHTML = key
+     tag.className = 'l'
+     //Ugh, horrible naming
+     tag.setAttribute('tagId', window.map.get(key))
+     tag.addEventListener('click',function(){ filterTag(key, window.map.get(key))}, false)
+     count.innerHTML = `(${value})`
+     count.className = "grey"
+     this.appendChild(tag)
+     this.appendChild(count)
+     // &nbsp;?
+     this.append(' ')
+    }, toBeInserted)
 
+})();
 
 function filterTag(tag, tagId){
     if(getActiveFilterIds().indexOf(tagId) != -1){
