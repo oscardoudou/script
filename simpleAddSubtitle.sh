@@ -1,12 +1,30 @@
 #!/bin/bash
 usage="Usage: $0 video_extension sub_extension"
-
-if [ -z "$*" ]; then 
+if [ $# -ne 2 ]; then 
     echo $usage
+    exit
 fi
 
 video_ext=$1
 sub_ext=$2
+sub_exts=(srt ass ssa)
+validSub=false
+
+for i in ${!sub_exts[@]}; do 
+   if [ "${sub_exts[i]}" = "$sub_ext" ]; then 
+       validSub=true
+       break
+   fi
+done
+
+if [ $validSub = "true" ]; then 
+   echo "sub extension is specified as ${sub_exts[i]}"
+else
+    echo "not valid sub extension for 2nd parameter"
+    echo $usage
+    exit
+fi
+
 #replace all files's space with underscore 
 for f in *; do
     mv "$f" $(echo "$f" | sed -E 's/ /_/g')
