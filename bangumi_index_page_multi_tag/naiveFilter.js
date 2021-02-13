@@ -14,7 +14,7 @@
 // ==/UserScript==
 GM_addStyle(".tag_filter { display: inline-block; margin: 0 5px 5px 0; padding: 2px 5px; font-size: 12px; color: #dcdcdc; border-radius: 5px; line-height: 150%; background: #6e6e6e; cursor: pointer;}");
 GM_addStyle(".tag_filter { font-family: 'SF Pro SC','SF Pro Display','PingFang SC','Lucida Grande','Helvetica Neue',Helvetica,Arial,Verdana,sans-serif,Hiragino Sans GB;}");
-GM_addStyle(".tag { margin: 1px;}");
+GM_addStyle(".tag { margin: 1px; cursor: pointer}");
 GM_addStyle(".searchContainer { height: 25px; min-width: 100%}")
 GM_addStyle(".searchLabel { height: 25px; min-width: 100%}")
 GM_addStyle(".searchInput { position: relative; width: 80%; top: 0; left: 0; margin: 0; height: 25px !important; border-radius: 4px; background-color: white !important; outline: 0px solid white !important; border: 0p}")
@@ -120,7 +120,7 @@ Object.defineProperty(String.prototype, 'hashCode', {
      let tag = document.createElement('a')
      let count = document.createElement('small')
      tag.innerHTML = key
-     tag.className = 'l'
+     tag.className = 'tag l'
      //Ugh, horrible naming
      tag.setAttribute('tagId', window.map.get(key))
      tag.addEventListener('click',function(){ filterTag(key, window.map.get(key))}, false)
