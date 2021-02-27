@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         bangumi index page tag filter
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1.2
+// @version      0.1.1.4
 // @description  filter space separated tags in comment box on bangumi index page
 // @author       You
-// @match        http://bangumi.tv/index/*
+// @include      /^https://(bangumi|bgm).tv/index.*$/
 // @require      https://code.jquery.com/ui/1.12.1/jquery-ui.js
 // @resource     jqueryuicss https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css
 // @grant       unsafeWindow
