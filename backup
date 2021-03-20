@@ -14,7 +14,7 @@ if [ -d $1/$currRepo ]; then
     exit 1
   fi
 fi
-
+# after above deletion of the destination, now make sure the destination folder not exist anymore
 if [ ! -d $1/$currRepo ]; then
   cp -r ../$currRepo $1
   ls -ld $1/$currRepo 
