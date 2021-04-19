@@ -3,6 +3,11 @@
 #   to rename sub files in another directory
 #   though it claims to be able to rename files using files in another file, it doesn't seem to be as of last attempt
 #   right now to quickly make it work, currently only support ./rename videoExt subExt. .
+usage="Usage: $0 videoExt subExt [videoFolder] [subFolder]"
+if [ -z "$@" ]; then
+    echo $usage
+    exit 1
+fi
 videoExt=$1
 subExt=$2
 dir1=${3:-.}
