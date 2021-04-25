@@ -1,0 +1,1 @@
+/Users/zhangyichi/script/ltbs/pattern_pattern_matching/rename.sh
