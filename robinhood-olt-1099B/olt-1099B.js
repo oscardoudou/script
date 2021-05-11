@@ -7,6 +7,7 @@
 // @match        https://www.olt.com/2020/oltproc/olt_capgainlossNec.php
 // @match        https://www.olt.com/2020/oltproc/olt_capgainlossdone.php*
 // @match        https://www.olt.com/2020/oltproc/olt_capgainloss.php
+// @match        https://www.olt.com/2020/oltproc/olt_welcome_page.php
 // @icon         https://www.google.com/s2/favicons?domain=olt.com
 // @grant        none
 // ==/UserScript==
@@ -35,6 +36,7 @@
         }
     }
 
+    var importCnt=$('#mytable .row-striped').length
     //add file button to sidebar
     var input = document.createElement('div')
     input.class = "nav-primary"
@@ -46,7 +48,7 @@
     var output = document.createElement('div')
     output.id = "out"
     output.class = "nav-primary"
-    output.innerHTML = "file contents will show here"
+    output.innerHTML = "Now " + importCnt+" transactions imported<br />Next you should select " + (++importCnt)+".csv in next page"
     input.append(output);
     var transaction,column,company,solddate,shareCnt,proceeds,acqdate,basis,column1g
     var fileInput = document.getElementById("csv")
@@ -87,18 +89,21 @@
     function fillOutForm(description,acqdate,proceeds,basis,solddate,column1g,isShortTerm,isGross){
         console.log("fillOutForm being called")
         $('#comment')[0].innerHTML=description
-
-        $('#acqmonthBID')[0].value=acqdate[0]
-        $('#acqdayBID')[0].value=acqdate[1]
-        $('#acqyearBID')[0].value="20"+acqdate[2]
-
+        console.log(acqdate)
+        if(acqdate.length==3){
+            $('#acqmonthBID')[0].value=acqdate[0]
+            $('#acqdayBID')[0].value=acqdate[1]
+            $('#acqyearBID')[0].value=acqdate[2].length==2?"20"+acqdate[2]:acqdate[2]
+        }else{
+            $('#various_indB')[0].checked=true
+        }
         $('#sell_priceB')[0].value=proceeds
 
         $('#buy_priceB')[0].value=basis
 
         $('#soldmonthBID')[0].value=solddate[0]
         $('#solddayBID')[0].value=solddate[1]
-        $('#soldyearBID')[0].value="20"+solddate[2]
+        $('#soldyearBID')[0].value=solddate[2].length==2?"20"+solddate[2]:solddate[2]
 
         $('#wash_sale_dis_amtS')[0].value=column1g!="..." ? column1g : 0;
 
@@ -110,5 +115,6 @@
     function reset(){
         console.log("reset being called")
         fillOutForm("",["","",""],"","",["","",""],"","","")
+        $('#various_indB')[0].checked=""
     }
 })();
