@@ -21,6 +21,7 @@ function isValidExtension(){
 
 ext=${1:?"required"}
 validExt=(mkv mp4)
+baseEpisode=${2:?"required"}
 isValidExtension "$ext" "${validExt[@]}"
 # if retun 0 meaning isValidExtension, we continue
 if [ $? = 0 ]; then 
@@ -60,7 +61,7 @@ log format
 
 for i in ${!episodes[@]}; do
     echo ${episodes[i]} | tee -a episodes.txt
-    episode="${series} - S${season}E$(printf $format $((i+1))).${ext}"
+    episode="${series} - S${season}E$(printf $format $((baseEpisode+i))).${ext}"
     log episode
     mv "${episodes[i]}" "$episode"
 done
